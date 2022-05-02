@@ -86,4 +86,3 @@ clog2<-ifelse(plog2>0.3,1,0)
 ctab2<-table(predicted=clog2,actual=test$admit)
 ctab2
 1-sum(diag(ctab2))/(sum(ctab2))
-.Rproj.user
