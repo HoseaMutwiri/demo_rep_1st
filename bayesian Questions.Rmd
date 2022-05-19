@@ -1,0 +1,128 @@
+---
+title: "bayesian assignment"
+author: "Hosea mutwiri"
+date: '2022-05-19'
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. In a small survey, a random sample of 50 people from a large population is selected. 
+Each person is asked a question to which the answer is either Yes" or No." Let the 
+proportion in the population who would answer Yes" be 𝜃. Our prior distribution 
+for 𝜃 is a 𝑏𝑒𝑡𝑎(1.5, 1.5) distribution. In the survey, 37 people answer “Yes.". 
+Use R to:
+i) Find prior probability that 𝜃 < 0.6 equals 0.62647.
+```{r}
+library(LearnBayes)
+library(HDInterval)
+
+pbeta(0.6,1.5,1.5)#PRIOR PROBABILITY
+```
+ii) Plot a graph showing the prior and posterior probability density functions of 𝜃
+on the same axes.
+```{r}
+#plotting a graph showing the prior and posterior probability
+theta<-seq(0.01,0.99,0.01)
+prior0<-dbeta(theta,1.5,1.5)
+par(mfrow=c(1,2))
+data<-c(37,13)
+posterior<-dbeta(theta,37,13)
+plot(theta,posterior,ylab="density")
+triplot(prior0,data,where="topright")
+```
+2. The numbers of sales of a particular item from an Internet retail site in each of 20 
+weeks are recorded. Assume that, given the value of a parameter 𝜆, these numbers 
+are independent observations from the Poisson (𝜆) distribution. Our prior 
+distribution for 𝜆 is a gamma (a, b) distribution. Suppose prior mean and standard 
+deviation for 𝜆 are 16 and 8 respectively. The observed numbers of sales are as 
+follows.
+14, 19, 14, 21, 22, 33, 15, 13, 16, 19, 27, 22, 27, 21, 16, 25, 14, 23, 22, 17
+
+```{r}
+#plotting both prior and posterior probability density function
+sales<-c(14,19,14,21,22,33,15,13,16,19,27,
+         22,27,16,25,14,23,22,17)
+lambda<-seq(10,25,0.05)
+prior<-dgamma(lambda,4,0.25)
+post<-dgamma(lambda,404,20.25)
+par(mfrow=c(1,2))
+plot(lambda,post,xlab="expression(lambda)",ylab="Density")
+triplot(prior,post,where="topright")
+```
+
+find a 95% posterior HPD interval for 𝜆.
+```{r}
+hdi(dgamma(0.95,404,20.25))#posterior HPD interval
+```
+
+3. If we observe 𝑛 independent occurrences 𝑥1
+, 𝑥2
+, … , 𝑥𝑛 from a Poisson distribution 
+with rate 𝜃 and assume that the prior distribution for 𝜃 is Gamma with parameter 𝛼
+and 𝛽, the resulting distribution is Gamma with parameters ( 𝑥𝑖 + 𝛼, 𝑛 + 𝛽). 
+Suppose the prior parameters are 2,5) and 𝑥𝑖 = 8 while 𝑛 = 10. 
+Write an R- code for plotting the posterior and prior distributions on the same axis 
+taking the range of 𝜃 to be 0 ≤ 𝜃 ≤ 2. 
+
+```{r}
+#plotting posterior and prior on the same axis
+theta1<-seq(0,2,0.001)
+y<-dgamma(theta1,2,5)
+plot(theta1,ylim=range(0:3),ylab="",xlab="theta")
+legend(0,2.5,"prior")
+legend(0.6,2.8,"posterior")
+curve(dbinom(2,8,x))#plotting likelihood function
+```
+4. Suppose that the proportion 𝜃 of defective items in a large manufactured lot is 
+known to be either 0.1 or 0.2, and the prior probability of θ is as follow 
+ 𝜋(0.1) = 0.7 and 𝜋 (0.2) = 0.3.
+Suppose also that when eight items are selected at random from the lot, it is found 
+that exactly two of them are defective. State the appropriate package that should be 
+loaded, write R-codes to plot the following and show the output;
+```{r}
+#plotting likelihood function
+x<-seq(0,1,by=0.001)
+plot(x,dbeta(x,1,1),ylab="",main="Beta (1,1) prior")
+```
+ii) uniform prior distribution named prior1 
+```{r}
+#plotting uniform prior distribution
+prior1=c(1,1)
+data1=c(2,6)
+triplot(prior1,data1,where="topright")
+```
+#plotting the data model prior1 and corresponding posterior
+plot(x,dbeta(x,2,3),ylab="",main="(Beta(2,3)prior")
+```{r}
+#plotting conjugate beta prior
+prior2=c(2,3)
+data=c(2,6)
+triplot(prior2,data,where="topright")
+```
+iv) conjugate beta prior with parameters 2 and 3 named prior2 
+```{r}
+par(mfrow=c(2,2))
+plot(x,dbeta(x,1,1),ylab="",main="Beta(1,1)prior")
+plot(x,dbeta(x,2,3),ylab="",main="(Beta(2,3)prior")
+```
+
+v) data model, prior2 and corresponding posterior on the same device
+```{r}
+par(mfrow=c(2,2))
+plot(x,dbeta(x,2,3),ylab="",main="(Beta(2,3)prior")
+triplot(prior2,data,where="topright")
+
+```
+vi) plots ii), iii), iv) and v) on the same graphic displayed in two rows and two 
+columns and follows row wise order
+```{r}
+par(mfrow=c(2,2))
+plot(x,dbeta(x,1,1),ylab="",main="Beta(1,1)prior")
+plot(x,dbeta(x,2,3),ylab="",main="(Beta(2,3)prior")
+triplot(prior1,data1,where="topright")
+triplot(prior2,data,where="topright")
+```
+
